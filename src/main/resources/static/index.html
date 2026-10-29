@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="data:,">
+  <title>BridgeLab — Web</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="header">
+    <div class="brand">
+      <h1>BridgeLab</h1>
+      <span class="tagline">Design. Connect. Load. Test.</span>
+    </div>
+
+    <nav class="menubar" aria-label="Main menu">
+      <div class="menu" data-menu="file">
+        <button class="menu-trigger" type="button" aria-haspopup="true" aria-expanded="false">File</button>
+        <div class="menu-dropdown">
+          <button type="button" data-action="new">New design</button>
+          <button type="button" data-action="save">Save design</button>
+          <button type="button" data-action="load">Load design</button>
+          <button type="button" data-action="export">Export image</button>
+        </div>
+      </div>
+      <div class="menu" data-menu="edit">
+        <button class="menu-trigger" type="button" aria-haspopup="true" aria-expanded="false">Edit</button>
+        <div class="menu-dropdown">
+          <button type="button" data-action="undo">Undo <span class="shortcut">Ctrl+Z</span></button>
+          <button type="button" data-action="redo">Redo <span class="shortcut">Ctrl+Y</span></button>
+          <button type="button" data-action="reset">Reset design</button>
+        </div>
+      </div>
+      <div class="menu" data-menu="view">
+        <button class="menu-trigger" type="button" aria-haspopup="true" aria-expanded="false">View</button>
+        <div class="menu-dropdown">
+          <button type="button" data-action="toggle-grid"><span class="check">&#10003;</span>Grid</button>
+          <button type="button" data-action="toggle-labels"><span class="check">&#10003;</span>Labels</button>
+          <button type="button" data-action="toggle-legend"><span class="check">&#10003;</span>Legend</button>
+        </div>
+      </div>
+      <div class="menu" data-menu="help">
+        <button class="menu-trigger" type="button" aria-haspopup="true" aria-expanded="false">Help</button>
+        <div class="menu-dropdown">
+          <button type="button" data-action="about">About BridgeLab</button>
+        </div>
+      </div>
+    </nav>
+
+    <div class="header-actions">
+      <button class="icon-btn" id="undoBtn" type="button" aria-label="Undo" title="Undo (Ctrl+Z)" onclick="undo()">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg>
+      </button>
+      <button class="icon-btn" id="redoBtn" type="button" aria-label="Redo" title="Redo (Ctrl+Y)" onclick="redo()">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 14l5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/></svg>
+      </button>
+      <button class="icon-btn icon-btn-accent" id="settingsBtn" type="button" aria-label="Settings" title="Settings" onclick="toggleSettings()">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1.03 1.56V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1.11-1.56 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.7 1.7 0 0 0 .34-1.87 1.7 1.7 0 0 0-1.56-1.03H3a2 2 0 1 1 0-4h.09a1.7 1.7 0 0 0 1.56-1.11 1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.7 1.7 0 0 0 1.87.34H9a1.7 1.7 0 0 0 1.03-1.56V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1.03 1.56 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87V9c.24.62.82 1.03 1.56 1.03H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.51.97z"/></svg>
+      </button>
+      <button class="icon-btn avatar" id="avatarBtn" type="button" aria-label="Account" title="About BridgeLab" onclick="openAbout()">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+      </button>
+    </div>
+
+    <div class="settings-popover" id="settingsPopover" hidden>
+      <h4>View settings</h4>
+      <label class="switch-row"><input type="checkbox" id="settingGrid" checked>Show grid</label>
+      <label class="switch-row"><input type="checkbox" id="settingLabels" checked>Show labels</label>
+      <label class="switch-row"><input type="checkbox" id="settingLegend" checked>Show legend</label>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="toolbar">
+      <div class="tool-group">
+        <button class="tool" data-mode="SELECT" type="button" onclick="setMode('SELECT')" aria-label="Select or move joint" title="Select / Move (V)">
+          <span class="tool-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3l14 7.2-5.6 1.5L10 20z" fill="currentColor" stroke="none"/></svg></span>
+          <span class="tool-label">Select</span>
+        </button>
+        <button class="tool" data-mode="ADD_JOINT" type="button" onclick="setMode('ADD_JOINT')" aria-label="Add joint" title="Add Joint (J)">
+          <span class="tool-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="6" fill="currentColor" stroke="none"/></svg></span>
+          <span class="tool-label">Add Joint</span>
+        </button>
+        <button class="tool" data-mode="ADD_BEAM" type="button" onclick="setMode('ADD_BEAM')" aria-label="Add beam" title="Add Beam (B)">
+          <span class="tool-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><circle cx="5" cy="12" r="2.4" fill="currentColor"/><circle cx="19" cy="12" r="2.4" fill="currentColor"/></svg></span>
+          <span class="tool-label">Add Beam</span>
+        </button>
+        <button class="tool" data-mode="SET_SUPPORT" type="button" onclick="setMode('SET_SUPPORT')" aria-label="Set support" title="Set Support (S)">
+          <span class="tool-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4l7.5 13h-15z" fill="currentColor" stroke="none"/></svg></span>
+          <span class="tool-label">Support</span>
+        </button>
+        <button class="tool" data-mode="APPLY_LOAD" type="button" onclick="setMode('APPLY_LOAD')" aria-label="Apply load" title="Apply Load (L)">
+          <span class="tool-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v13"/><path d="M6 12l6 6 6-6"/></svg></span>
+          <span class="tool-label">Load</span>
+        </button>
+        <button class="tool" type="button" onclick="reset()" aria-label="Reset" title="Reset (Delete)">
+          <span class="tool-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4v6h6"/><path d="M4 10a8 8 0 1 1 2.3 7.7"/></svg></span>
+          <span class="tool-label">Reset</span>
+        </button>
+      </div>
+
+      <div class="load-step">
+        <label for="loadStep">Load per click</label>
+        <select id="loadStep" onchange="setLoadStep(this.value)">
+          <option value="50">50 kN</option>
+          <option value="100" selected>100 kN</option>
+          <option value="200">200 kN</option>
+        </select>
+      </div>
+
+      <div class="budget">
+        <span class="budget-label">Budget:</span>
+        <span class="budget-value" id="budgetValue">$50,000</span>
+      </div>
+    </aside>
+
+    <main class="main">
+      <canvas id="bridgeCanvas" width="900" height="600"></canvas>
+      <div class="demo-guide" id="demoGuide" aria-label="Demo checklist">
+        <button class="guide-step" type="button" data-step="supports" onclick="setMode('SET_SUPPORT')" title="Step 1: add a pinned and a roller support">1 Supports</button>
+        <button class="guide-step" type="button" data-step="load" onclick="setMode('APPLY_LOAD')" title="Step 2: click a joint to apply load">2 Load</button>
+        <button class="guide-step" type="button" data-step="test" onclick="startTest()" title="Step 3: run the moving-load test">3 Run Test</button>
+      </div>
+    </main>
+
+    <aside class="results">
+      <div class="scenario-bar" role="group" aria-label="Demo scenarios">
+        <span class="scenario-title">Demo</span>
+        <button class="scenario-btn" type="button" onclick="loadScenario('pass')" title="Load a design that passes at 200 kN and analyze it">Passing</button>
+        <button class="scenario-btn" type="button" onclick="loadScenario('overload')" title="Load the same design at 300 kN and analyze it">Overload</button>
+      </div>
+
+      <div class="result-actions">
+        <button class="btn-secondary" id="analyzeBtn" type="button" onclick="analyze()" aria-label="Analyze design" title="Analyze without animation">Analyze</button>
+        <button class="btn-primary" id="runTestBtn" type="button" onclick="startTest()" aria-label="Run test" title="Run Test">
+          <span>Run Test</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5l11 7-11 7z" fill="currentColor" stroke="none"/></svg>
+        </button>
+      </div>
+
+      <div class="results-panel">
+        <div class="results-heading">
+          <h3>Results</h3>
+          <button class="report-link" id="reportBtn" type="button" onclick="openReport()">Full report</button>
+        </div>
+        <div class="results-card" id="summaryCard">
+          <div><span>Status:</span> <span id="statusBadge">Ready</span></div>
+          <div><span>Total Load:</span> <span id="totalLoad">0 kN</span></div>
+          <div><span>Capacity:</span> <span id="capacity">&mdash;</span></div>
+          <div><span>Max Utilization:</span> <span id="maxUtil">0%</span></div>
+          <div class="util-meter-row" aria-label="Stress utilization">
+            <span>Stress</span>
+            <div class="util-meter"><div class="util-meter-fill" id="utilFill"></div></div>
+          </div>
+          <div><span>Overloaded:</span> <span id="overloadCount">No</span></div>
+        </div>
+        <p id="resultMessage" class="result-message" hidden></p>
+        <table id="memberTable">
+          <thead><tr><th>ID</th><th>Type</th><th>Force</th><th>Util%</th></tr></thead>
+          <tbody id="memberTableBody"></tbody>
+        </table>
+        <details>
+          <summary>Raw JSON</summary>
+          <pre id="resultsContent">Run Test to see results.</pre>
+        </details>
+      </div>
+    </aside>
+  </div>
+
+  <div class="bottom-bar">
+    <span id="cursorCoords">Coordinates: (0, 0)</span>
+    <span class="disclaimer">BridgeLab — Educational simulation only. Not a certified engineering tool.</span>
+    <span id="statusSummary">Active: Select | Joints: 3 | Beams: 3 | Supports: 0 | Loads: 0</span>
+  </div>
+
+  <input type="file" id="loadFile" accept="application/json,.json" hidden>
+
+  <div class="modal-backdrop" id="aboutModal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
+      <button class="modal-close" type="button" aria-label="Close" onclick="closeAbout()">&times;</button>
+      <h2 id="aboutTitle">BridgeLab</h2>
+      <p>A physics-based bridge builder and load simulator for learning structural concepts.</p>
+      <p class="modal-note">Design a 2D bridge, add pinned and roller supports, apply a downward load, then analyze or run a moving-load test. Results are an educational approximation, not a certified engineering analysis.</p>
+      <div class="modal-meta">SRMIST &middot; 3rd Semester CSE (Data Science)</div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop report-backdrop" id="reportModal" hidden>
+    <div class="modal report-modal" role="dialog" aria-modal="true" aria-labelledby="reportTitle">
+      <button class="modal-close" type="button" aria-label="Close report" onclick="closeReport()">&times;</button>
+      <div id="reportContent"></div>
+    </div>
+  </div>
+
+  <script src="js/state.js"></script>
+  <script src="js/scene.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/canvas.js"></script>
+  <script src="js/tools.js"></script>
+  <script src="js/report.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
